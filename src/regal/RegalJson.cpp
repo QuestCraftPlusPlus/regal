@@ -29,6 +29,9 @@
 
 #include "RegalUtil.h"
 
+#if REGAL_NO_JSON
+#else
+
 REGAL_GLOBAL_BEGIN
 
 #include "RegalLog.h"
@@ -663,3 +666,4 @@ Parser::parseString(const char *json)
 
 REGAL_NAMESPACE_END
 
+#endif

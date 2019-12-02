@@ -42,8 +42,6 @@ REGAL_GLOBAL_BEGIN
 #include "RegalEmu.h"
 #include "RegalIff.h"
 
-#include "program.h"
-
 using std::string;
 
 REGAL_GLOBAL_END
@@ -52,6 +50,8 @@ REGAL_NAMESPACE_BEGIN
 
 namespace Shader {
 
+  bool OptimizeGLSL (bool is_es, GLenum type, string input, string& output, Emu::Iff::CompareFunc comp );
+#if REGAL_GLSL_OPTIMIZER
   struct regal_glsl_shader;
   struct regal_glsl_ctx;
 
@@ -60,7 +60,6 @@ namespace Shader {
     kRegalGlslShaderFragment,
   };
 
-  bool OptimizeGLSL (bool is_es, GLenum type, string input, string& output, Emu::Iff::CompareFunc comp );
   regal_glsl_ctx* regal_glsl_initialize (gl_api api);
   void regal_glsl_cleanup (regal_glsl_ctx* ctx);
 
@@ -75,6 +74,7 @@ namespace Shader {
   const char* regal_glsl_get_raw_output (regal_glsl_shader* shader);
   const char* regal_glsl_get_log (regal_glsl_shader* shader);
   void regal_glsl_shader_delete (regal_glsl_shader* shader);
+#endif
 }
 
 REGAL_NAMESPACE_END

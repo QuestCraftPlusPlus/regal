@@ -55,24 +55,22 @@ REGAL_GLOBAL_END
 
 REGAL_NAMESPACE_BEGIN
 
+
+#if REGAL_GLSL_OPTIMIZER
 extern "C" struct gl_shader *
 _mesa_new_shader(struct gl_context *ctx, GLuint name, GLenum type);
-
+#endif
 
 namespace Shader {
 
   // external interface for using the GLSL optimizer
   bool OptimizeGLSL (bool is_es, GLenum type, string input, string& output, Emu::Iff::CompareFunc comp )
-
-#if ! REGAL_GLSL_OPTIMIZER
-
+#if !REGAL_GLSL_OPTIMIZER
   {
     // returning false here means output will be ignored and the original shader will be used
     return false;
   }
-
 #else
-
   {
     bool res = true;
 

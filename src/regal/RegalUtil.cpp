@@ -135,7 +135,7 @@ enum Library
   LIBRARY_EGL
 };
 
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__EMSCRIPTEN__)
 static
 const char *libraryLocation(const Library &library)
 {

@@ -51,9 +51,9 @@ REGAL_NAMESPACE_BEGIN
 #  endif
 #endif
 
-// Http is disabled for NaCL, for now
+// Http is disabled for NaCL and Emscripten, for now
 
-#if REGAL_SYS_PPAPI
+#if REGAL_SYS_PPAPI || REGAL_SYS_EMSCRIPTEN
 #undef REGAL_HTTP
 #define REGAL_HTTP 0
 #endif

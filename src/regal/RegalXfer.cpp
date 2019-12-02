@@ -142,7 +142,7 @@ namespace Emu {
     }
     if ( format == GL_BGRA && type == GL_UNSIGNED_INT_8_8_8_8_REV ) {
       // GAB NOTE Dec 2018: Not sure about this one: BGRA+REVERSE is equivalent to RGBA no?
-      complex = 1;
+      //complex = 1;
       tgtfmt = GL_RGBA;
       tgttype = GL_UNSIGNED_BYTE;
     }

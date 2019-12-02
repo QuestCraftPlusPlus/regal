@@ -73,59 +73,27 @@
 #define REGAL_DECL_EXPORT 1
 #endif
 
-// Defaults for Emscripten static mode
-
-#if REGAL_SYS_EMSCRIPTEN_STATIC
-# ifndef REGAL_DRIVER
-#  define REGAL_DRIVER 1
-# endif
-# ifndef REGAL_NAMESPACE
-#  define REGAL_NAMESPACE 1
-# endif
-# ifndef REGAL_LOADER
-#  define REGAL_LOADER 0
-# endif
-# ifndef REGAL_MISSING
-#  define REGAL_MISSING 0
-# endif
-# ifndef REGAL_PLUGIN
-#  define REGAL_PLUGIN 0
-# endif
-# ifndef REGAL_TRACE
-#  define REGAL_TRACE 0
-# endif
-# ifndef REGAL_STATIC_ES2
-#  define REGAL_STATIC_ES2 1
-# endif
-# ifndef REGAL_STATIC_EGL
-#  define REGAL_STATIC_EGL 1
-# endif
-# ifndef REGAL_NO_GETENV
-#  define REGAL_NO_GETENV 1
-# endif
-#endif
-
 // Wrangler mode is driver and missing dispatch, only
 
 #ifndef REGAL_WRANGLER
 #define REGAL_WRANGLER 0
 #endif
 
-// Support for "plugin" dispatch or emulation layers by default.
+// Support for "plugin" dispatch or emulation layers by default, except on Emscripten
 // Some features require this, otherwise: -DREGAL_PLUGIN=0
 
 #ifndef REGAL_PLUGIN
-#  if REGAL_WRANGLER
+#  if REGAL_WRANGLER || REGAL_SYS_EMSCRIPTEN
 #    define REGAL_PLUGIN 0
 #  else
 #    define REGAL_PLUGIN 1
 #  endif
 #endif
 
-// Support for per-frame capture, etc
+// Support for per-frame capture, etc, except on Emscripten
 
 #ifndef REGAL_FRAME
-#  if REGAL_WRANGLER
+#  if REGAL_WRANGLER || REGAL_SYS_EMSCRIPTEN
 #    define REGAL_FRAME 0
 #  else
 #    define REGAL_FRAME 1
@@ -163,10 +131,10 @@
 #endif
 
 // Code logging unsupported by default in
-// release mode, or embedded
+// release mode, or embedded and Emscripten
 
 #ifndef REGAL_CODE
-# if defined(NDEBUG) || REGAL_SYS_IOS || REGAL_SYS_PPAPI || REGAL_SYS_ANDROID || REGAL_WRANGLER
+# if defined(NDEBUG) || REGAL_SYS_IOS || REGAL_SYS_PPAPI || REGAL_SYS_ANDROID || REGAL_WRANGLER || REGAL_SYS_EMSCRIPTEN
 #  define REGAL_CODE 0
 # else
 #  define REGAL_CODE 1
@@ -174,10 +142,10 @@
 #endif
 
 // Trace dispatch unsupported by default in
-// release mode
+// release mode and Emscripten
 
 #ifndef REGAL_TRACE
-# if defined(NDEBUG) || REGAL_SYS_PPAPI || REGAL_WRANGLER
+# if defined(NDEBUG) || REGAL_SYS_PPAPI || REGAL_WRANGLER || REGAL_SYS_EMSCRIPTEN
 #   define REGAL_TRACE 0
 # else
 #   define REGAL_TRACE 1
@@ -185,10 +153,10 @@
 #endif
 
 // Http dispatch unsupported by default in
-// release mode
+// release mode and Emscripten
 
 #ifndef REGAL_HTTP
-# if defined(NDEBUG) || REGAL_SYS_PPAPI || REGAL_WRANGLER
+# if defined(NDEBUG) || REGAL_SYS_PPAPI || REGAL_WRANGLER || REGAL_SYS_EMSCRIPTEN
 #   define REGAL_HTTP 0
 # else
 #   define REGAL_HTTP 1
@@ -206,7 +174,7 @@
 #  endif
 #endif
 
-// Statistics gathering disabled in release mode, or embedded
+// Statistics gathering disabled in release mode, or embedded and Emscripten
 
 #ifndef REGAL_STATISTICS
 # if defined(NDEBUG) || REGAL_SYS_IOS || REGAL_SYS_PPAPI || REGAL_SYS_ANDROID || REGAL_SYS_EMSCRIPTEN || REGAL_WRANGLER
@@ -216,11 +184,15 @@
 # endif
 #endif
 
-// Converting enum values to strings adds some footprint,
+// Converting enum values to strings adds some footprint, except on Emscripten (to reduce code size)
 // opt-out with -DREGAL_ENUM_TO_STRING=0
 
 #ifndef REGAL_ENUM_TO_STRING
-#define REGAL_ENUM_TO_STRING 1
+# if REGAL_SYS_EMSCRIPTEN
+#  define REGAL_ENUM_TO_STRING 0
+# else
+#  define REGAL_ENUM_TO_STRING 1
+#endif
 #endif
 
 // Driver dispatch supported by default
@@ -229,17 +201,28 @@
 #define REGAL_DRIVER 1
 #endif
 
-// Lazy loading of driver dispatch supported by default
+// Lazy loading of driver dispatch supported by default, except on Emscripten
 
 #ifndef REGAL_LOADER
-#define REGAL_LOADER 1
+# if REGAL_SYS_EMSCRIPTEN
+#  define REGAL_LOADER 0
+# else
+#  define REGAL_LOADER 1
+# endif
 #endif
 
 // Avoid crashing for missing driver functions by default
+// opt-out with -DREGAL_MISSING=0
+// NB: see if it should be enabled on Emscripten
 
 #ifndef REGAL_MISSING
 #define REGAL_MISSING 1
 #endif
+
+
+// Logging
+// opt-out with -DREGAL_LOG=0
+// NB: see if it should be enabled on Emscripten
 
 #ifndef REGAL_LOG
 #  if REGAL_WRANGLER
@@ -404,10 +387,10 @@
 #endif
 
 // Caching supported by default
-// ... except for release-mode and embedded platforms
+// ... except for release-mode and embedded platforms and Emscripten
 
 #ifndef REGAL_CACHE
-# if defined(NDEBUG) || REGAL_SYS_IOS || REGAL_SYS_PPAPI || REGAL_SYS_ANDROID || REGAL_WRANGLER
+# if defined(NDEBUG) || REGAL_SYS_IOS || REGAL_SYS_PPAPI || REGAL_SYS_ANDROID || REGAL_WRANGLER || REGAL_SYS_EMSCRIPTEN
 #  define REGAL_CACHE 0
 # else
 #  define REGAL_CACHE 1
@@ -471,17 +454,29 @@
 #endif
 
 #ifndef REGAL_GLSL_OPTIMIZER
-#define REGAL_GLSL_OPTIMIZER 1
+# if REGAL_SYS_EMSCRIPTEN
+#  define REGAL_GLSL_OPTIMIZER 0
+# else
+#  define REGAL_GLSL_OPTIMIZER 1
+# endif
 #endif
 
 //
 
 #ifndef REGAL_STATIC_ES2
-#define REGAL_STATIC_ES2 0
+# if REGAL_SYS_EMSCRIPTEN
+#  define REGAL_STATIC_ES2 1
+# else
+#  define REGAL_STATIC_ES2 0
+# endif
 #endif
 
 #ifndef REGAL_STATIC_EGL
-#define REGAL_STATIC_EGL 0
+# if REGAL_SYS_EMSCRIPTEN
+#  define REGAL_STATIC_EGL 1
+# else
+#  define REGAL_STATIC_EGL 0
+# endif
 #endif
 
 // Defaults for REGAL_NO_...
@@ -507,7 +502,7 @@
 // Defaults for REGAL_NO_...
 
 #ifndef REGAL_NO_PNG
-#  if REGAL_WRANGLER
+#  if REGAL_WRANGLER || REGAL_SYS_EMSCRIPTEN
 #    define REGAL_NO_PNG 1
 #  else
 #    define REGAL_NO_PNG 0
@@ -519,15 +514,27 @@
 #endif
 
 #ifndef REGAL_NO_TLS
+# if REGAL_SYS_EMSCRIPTEN && !REGAL_SYS_EMSCRIPTEN_PTHREADS
+#  define REGAL_NO_TLS 1
+# else
 #  define REGAL_NO_TLS 0
+#endif
 #endif
 
 #ifndef REGAL_NO_JSON
+# if REGAL_SYS_EMSCRIPTEN
+#  define REGAL_NO_JSON 1
+# else
 #  define REGAL_NO_JSON 0
+# endif
 #endif
 
 #ifndef REGAL_THREAD_LOCKING
+# if REGAL_SYS_EMSCRIPTEN && !REGAL_SYS_EMSCRIPTEN_PTHREADS
+#  define REGAL_THREAD_LOCKING 0
+# else
 #  define REGAL_THREAD_LOCKING 1
+#endif
 #endif
 
 // AssertFunction depends on Error log, but

@@ -320,7 +320,6 @@ static void GenerateVertexShaderSource( const Iff * rff, const Iff::State & stat
   n = array_size( st.tex );
   // GAB Note Jan 2019: define rglTEXCOORD like gl_TexCoord, that is an array of vec4
   if (n > 0) {
-    src << "#define gl_TexCoord rglTEXCOORD\n";
     src << "out vec4 rglTEXCOORD[" << n << "];\n";
   }
   for ( size_t i = 0; i < n; i++ )
@@ -1207,7 +1206,6 @@ static void GenerateFragmentShaderSource( Iff * rff, string_list &src )
   size_t n = array_size( rff->ffstate.processed.tex );
   // GAB Note Jan 2019: define rglTEXCOORD like gl_TexCoord, that is an array of vec4
   if (n > 0) {
-    src << "#define gl_TexCoord rglTEXCOORD\n";
     src << "in vec4 rglTEXCOORD[" << n << "];\n";
   }
   for ( size_t i = 0; i < n; i++ )
@@ -4453,6 +4451,9 @@ void Iff::ShaderSource( RegalContext *ctx, GLuint shader, GLsizei count, const G
       // GAB NOTE Dec 2018: do not use EXT_shadow_samplers on Emscripten/WebGL. This is not a valid WebGL extension, and make shader compilation fail.
       ss << "#extension GL_EXT_shadow_samplers : enable\n";
       ss << "#define shadow2D(a,b) vec4(shadow2DEXT(a,b))\n";
+#else
+      // GAB Note Dec: 2019: OES_standard_derivatives is available on all browsers
+      ss << "#extension GL_OES_standard_derivatives : enable\n";
 #endif
 #endif
     }
@@ -4586,6 +4587,10 @@ void Iff::ShaderSource( RegalContext *ctx, GLuint shader, GLsizei count, const G
 
   if( src.find( "gl_ModelViewMatrix" ) != string::npos || uses_ftransform ) {
     ss << "uniform mat4 rglModelViewMatrix;\n";
+  }
+
+  if( src.find( "gl_ModelViewMatrixInverseTranspose" ) != string::npos ) {
+    ss << "uniform mat4 rglModelViewMatrixInverseTranspose;\n";
   }
 
   if( src.find( "gl_ProjectionMatrix" ) != string::npos || uses_ftransform ) {

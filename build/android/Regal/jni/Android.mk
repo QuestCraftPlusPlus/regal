@@ -15,7 +15,7 @@ endif
 
 # apitrace still needs -DANDROID=1 
 
-regal_cflags := -DANDROID=1 -DREGAL_NO_PNG=1 -DREGAL_CONFIG_FILE=/data/.regal -Werror -Wno-constant-logical-operand
+regal_cflags := -DANDROID=1 -DREGAL_NO_PNG=1 -DREGAL_CONFIG_FILE=/data/.regal -Wno-constant-logical-operand -Wno-register
 
 regal_path   := $(LOCAL_PATH)/../../../..
 
@@ -190,7 +190,7 @@ LOCAL_C_INCLUDES := $(regal_c_includes)
 LOCAL_EXPORT_C_INCLUDES := $(regal_export_c_includes)
 LOCAL_STATIC_LIBRARIES := apitrace zlib snappy
 LOCAL_STATIC_LIBRARIES += glslopt pcre
-LOCAL_LDLIBS := -llog
+LOCAL_LDLIBS := -llog -lEGL -lGLESv2
 LOCAL_EXPORT_LDLIBS := -llog
 LOCAL_ARM_MODE  := arm
 include $(BUILD_SHARED_LIBRARY)

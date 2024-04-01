@@ -42,6 +42,20 @@ REGAL_GLOBAL_BEGIN
 #include "RegalEmu.h"
 #include "RegalIff.h"
 
+
+#if REGAL_GLSL_OPTIMIZER
+#include "ast.h"
+#include "glsl_parser_extras.h"
+#include "glsl_parser.h"
+#include "ir_optimization.h"
+#include "ir_print_glsl_visitor.h"
+#include "ir_print_visitor.h"
+#include "loop_analysis.h"
+#include "program.h"
+#include "linker.h"
+#endif // REGAL_GLSL_OPTIMIZER
+
+
 using std::string;
 
 REGAL_GLOBAL_END

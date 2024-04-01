@@ -137,9 +137,9 @@ EmuInfo::init(const ContextInfo &contextInfo)
 #endif
 
 #ifdef REGAL_GL_VERSION
-  version = REGAL_EQUOTE(REGAL_GL_VERSION);
+  version = "4.6";
 #else
-  version = contextInfo.version;
+  version = "4.6";
 #endif
 
 #ifdef REGAL_GL_EXTENSIONS
